@@ -6,7 +6,7 @@ const port = 3000;
 
 
 io.on("connection", socket => {
-    console.log("User Senang");
+    console.log("User Senang Karena Konek");
 })
 
 server.listen(port, () => console.log("server running on port" + port));
