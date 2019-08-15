@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, TextInput, StyleSheet } from 'react-native'
+import publicIP from 'react-native-public-ip';
 import io from 'socket.io-client'
 console.disableYellowBox = true
 export default class App extends Component {
@@ -8,6 +9,7 @@ export default class App extends Component {
     this.state = {
       chatMsg: '',
       chatMsgs: [],
+      ipMe: ''
 
     };
   }
@@ -21,6 +23,15 @@ export default class App extends Component {
     this.socket.on("chat message", msg => {
       this.setState({ chatMsgs: [...this.state.chatMsgs, msg] })
     })
+    publicIP()
+      .then(ip => {
+        this.setState({ ipMe: ip })
+        // '47.122.71.234'
+      })
+      .catch(error => {
+        console.log(error);
+        // 'Unable to get IP address.'
+      });
   }
   submitMsg() {
     this.socket.emit("chat message", this.state.chatMsg)
@@ -29,7 +40,7 @@ export default class App extends Component {
   }
 
   render() {
-    console.log(this.state.chatMsgs)
+    console.log(this.state.ipMe)
     const chatMsgs = this.state.chatMsgs.map(chatMsg => (
       <Text style={styles.chatMsg}>{chatMsg}</Text>
     ))
