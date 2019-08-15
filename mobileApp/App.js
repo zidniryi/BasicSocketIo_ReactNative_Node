@@ -6,14 +6,34 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chatMsg: ''
+      chatMsg: '',
+      chatMsgs: [],
 
     };
   }
+  /**
+   * To mount socket io
+   * {@constant} to public with {this}
+   */
   componentDidMount() {
-    const socket = io("http://192.168.5.42:3000")
+    this.socket = io("http://192.168.5.42:3000")
+    // Listener
+    this.socket.on("chat message", msg => {
+      this.setState({ chatMsgs: [...this.state.chatMsgs, msg] })
+    })
   }
+  submitMsg() {
+    this.socket.emit("chat message", this.state.chatMsg)
+    this.setState({ chatMsg: '' })
+
+  }
+
   render() {
+    console.log(this.state.chatMsgs)
+    const chatMsgs = this.state.chatMsgs.map(chatMsg => (
+      <Text style={styles.chatMsg}>{chatMsg}</Text>
+    ))
+
     return (
       <View style={styles.viewContainer}>
         <TextInput
@@ -22,7 +42,11 @@ export default class App extends Component {
           onChangeText={chatMsg => this.setState({
             chatMsg
           })}
+          value={this.state.chatMsg}
+          onSubmitEditing={() => this.submitMsg()}
+          placeholder="Type word for her .  . ."
         />
+        {chatMsgs}
       </View>
     )
   }
@@ -33,8 +57,23 @@ const styles = StyleSheet.create({
     flex: 1
   },
   textChat: {
-    height: 40,
-    borderWidth: 1
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#2ecc71',
+    borderRadius: 5,
+    marginBottom: 20
+  },
+  chatMsg: {
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    backgroundColor: '#2ecc71',
+    borderRadius: 20,
+    padding: 5,
+    marginVertical: 4,
+    width: '50%',
+    color: '#FFFFFF',
+    marginHorizontal: 5
   }
+
 });
 
