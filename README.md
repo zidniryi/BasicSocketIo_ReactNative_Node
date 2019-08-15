@@ -15,5 +15,5 @@ For mobile
 Then 
 ****react-native run-android****
 
-
+## Don't foget install **nodemon**
 
